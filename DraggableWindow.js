@@ -109,6 +109,13 @@ draggableWindowTemplate.innerHTML = `
             user-select: none;
             border: 1px solid #222;
         }
+
+        .window .body iframe
+        {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
     <div class="window">
         <div class="header">
@@ -121,7 +128,7 @@ draggableWindowTemplate.innerHTML = `
             </div>
         </div>
         <div class="body">
-            <iframe src="" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+            <iframe src="."></iframe>
         </div>
     </div>
 `;
