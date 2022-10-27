@@ -174,10 +174,15 @@ class DraggableWindow extends HTMLElement
         this.#titleElem.innerText = this.getAttribute('window-title');
         this.#body.src = this.getAttribute('content-url');
 
-        this.#startSize = { width: this.#windowFrame.clientWidth, height: this.#windowFrame.clientHeight };
+        this.#startSize =
+        {
+            width: this.#windowFrame.clientWidth,
+            height: this.#windowFrame.clientHeight
+        };
         this.#size = this.#startSize;
 
-        this.#position = { 
+        this.#position =
+        { 
             x: window.innerWidth/2-this.#size.width/2, 
             y: 100
         };
@@ -364,7 +369,11 @@ class DraggableWindow extends HTMLElement
     {
         if(!this.#maximized)
         {
-            this.#startSize = { width: this.#windowFrame.clientWidth, height: this.#windowFrame.clientHeight };
+            this.#startSize = 
+            {
+                width: this.#windowFrame.clientWidth, 
+                height: this.#windowFrame.clientHeight 
+            };
 
             this.#windowFrame.classList.add('maximized');
             
@@ -372,7 +381,11 @@ class DraggableWindow extends HTMLElement
         }
         else
         {
-            this.#position = { x: this.#position.x, y: this.#position.y };
+            this.#position =
+            { 
+                x: this.#position.x, 
+                y: this.#position.y 
+            };
 
             this.#windowFrame.style.width = this.#startSize.width+'px';
             this.#windowFrame.style.height = this.#startSize.height+'px';
