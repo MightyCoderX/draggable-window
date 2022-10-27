@@ -204,8 +204,7 @@ class DraggableWindow extends HTMLElement
         
         new ResizeObserver(() =>
         {
-            let width = this.#windowFrame.clientWidth;
-            let height = this.#windowFrame.clientHeight;
+            let { width, height } = this.#windowFrame.getBoundingClientRect();
             this.#size = { width, height };
             
         }).observe(this.#windowFrame);
