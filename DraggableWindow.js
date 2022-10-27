@@ -33,6 +33,8 @@ draggableWindowTemplate.innerHTML = `
             pointer-events: all;
             width: var(--window-width);
             height: calc(var(--window-width) * 9/16);
+            min-width: 100px;
+            min-height: 100px;
             resize: both;
         }
 
