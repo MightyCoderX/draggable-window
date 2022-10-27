@@ -50,6 +50,7 @@ draggableWindowTemplate.innerHTML = `
             width: 100% !important;
             height: 100% !important;
             border-radius: 0 !important;
+            transition-property: transform, top, left, width, height, border-radius;
         }
         
         .window .header
