@@ -14,6 +14,7 @@ draggableWindowTemplate.innerHTML = `
         {
             --header-height: 30px;
             --window-width: 60vw;
+            --transition-duration: 0.1s;
         
             position: absolute;
             display: block;
@@ -25,7 +26,7 @@ draggableWindowTemplate.innerHTML = `
             overflow: hidden;
             box-shadow: 0px 0px 5px #222222a4;
             transition-property: transform;
-            transition-duration: 0.1s;
+            transition-duration: var(--transition-duration);
             transition-timing-function: ease-in;
             pointer-events: all;
             width: var(--window-width);
@@ -404,13 +405,13 @@ class DraggableWindow extends HTMLElement
         this.#windowFrame.style.transformOrigin = 'center';
         this.#windowFrame.style.transform = 'scale(0)';
 
-        //TODO Make css variable for this
-        let dur = this.#shadow.styleSheets[0].cssRules[1].style.transitionDuration.slice(0, -1);
+        let duration = getComputedStyle(this.#windowFrame)
+            .getPropertyValue('--transition-duration').slice(0, -1);
     
         setTimeout(() =>
         {
             this.remove();
-        }, dur*1000);
+        }, duration*1000);
     }
 }
 
