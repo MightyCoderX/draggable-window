@@ -137,6 +137,8 @@ class DraggableWindow extends HTMLElement
     
     #focused;
     
+    #minimizeOrigin;
+    
     #maximized;
     #minimized;
     #headerMouseDown;
@@ -171,8 +173,15 @@ class DraggableWindow extends HTMLElement
 
         this.#focused = false;
 
+        //Attributes
         this.#titleElem.innerText = this.getAttribute('window-title');
         this.#body.src = this.getAttribute('content-url');
+        const minimizeOrigin = this.getAttribute('minimize-origin').split(' ');
+        this.#minimizeOrigin =
+        {
+            x: minimizeOrigin[0],
+            y: minimizeOrigin[1]
+        };
 
         this.#startSize =
         {
@@ -337,20 +346,14 @@ class DraggableWindow extends HTMLElement
     {
         if(!this.#minimized)
         {
-            // let panelIcon = document.querySelector(`.panel panel-icon[app-name=${this.getAttribute('window-title')}]`);
-            // let panelIconPos = { 
-            //     x: panelIcon.getBoundingClientRect().x, 
-            //     y: panelIcon.getBoundingClientRect().y 
-            // };
-
             this.#position.x = this.#windowFrame.getBoundingClientRect().x;
             this.#position.y = this.#windowFrame.getBoundingClientRect().y;
 
             this.#windowFrame.classList.add('minimized');
             
-            // this.#windowFrame.style.transformOrigin = `${panelIconPos.x}px ${panelIconPos.y}px`;
-            // this.#windowFrame.style.left = `${panelIconPos.x-this.size.width}px`;
-            // this.#windowFrame.style.top = `${panelIconPos.y}px`;
+            this.#windowFrame.style.transformOrigin = `${this.#minimizeOrigin.x}px ${this.#minimizeOrigin.y}px`;
+            this.#windowFrame.style.left = `${this.#minimizeOrigin.x-this.#size.width}px`;
+            this.#windowFrame.style.top = `${this.#minimizeOrigin.y}px`;
             this.#windowFrame.style.transform = 'scale(0)';
             this.#minimized = true;
         }
