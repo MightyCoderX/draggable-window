@@ -149,7 +149,7 @@ class DraggableWindow extends HTMLElement
     #body;
     
     #focused;
-    
+
     #minimizeOrigin;
     
     #maximized;
@@ -181,7 +181,7 @@ class DraggableWindow extends HTMLElement
         this.#btnMaximize = this.#shadow.querySelector('.header .maximize');
         this.#btnClose = this.#shadow.querySelector('.header .close');
         this.#body = this.#shadow.querySelector('.window .body iframe');
-                
+
         this.#body.name = 'content';
 
         this.#focused = false;
@@ -223,7 +223,6 @@ class DraggableWindow extends HTMLElement
         this.#btnMaximize.addEventListener('click', () => this.maximize());
         this.#btnClose.addEventListener('click', () => this.close());
 
-        
         new ResizeObserver(() =>
         {
             let { width, height } = this.#windowFrame.getBoundingClientRect();
@@ -279,12 +278,15 @@ class DraggableWindow extends HTMLElement
         this.#body.contentWindow.focus();
     }
 
+    //TODO sort out this mess
     #dragWindow()
     {
         let windowMouseX, windowMouseY;
         
         let mouseDown = (e) =>
         {
+            if(!e.target.matches('.header')) return;
+
             this.#focusWindow();
 
             let clientX = e.clientX | e.changedTouches?.[0].pageX;
