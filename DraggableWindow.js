@@ -1,3 +1,5 @@
+'use strict';
+
 const draggableWindowTemplate = document.createElement('template');
 
 draggableWindowTemplate.innerHTML = `
