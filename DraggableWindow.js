@@ -257,7 +257,7 @@ class DraggableWindow extends HTMLElement
         return this.#_position;
     }
 
-    get iframe()
+    get #iframe()
     {
         return this.#body;
     }
