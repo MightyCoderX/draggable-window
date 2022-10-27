@@ -125,6 +125,8 @@ draggableWindowTemplate.innerHTML = `
 
 class DraggableWindow extends HTMLElement
 {
+    #shadow;
+
     #windowFrame;
     #header;
     #titleElem;
@@ -132,33 +134,41 @@ class DraggableWindow extends HTMLElement
     #btnMaximize;
     #btnClose;
     #body;
-
+    
     #focused;
-
+    
+    #maximized;
+    #minimized;
+    #headerMouseDown;
+    
     #startSize;
     #size;
 
+    #closeEvent;
+    
     #_position;
 
     constructor()
     {
         super();
-        
-        this.shadow = this.attachShadow({ mode: 'closed' });
-        
-        this.shadow.appendChild(draggableWindowTemplate.content.cloneNode(true));
-    }
 
+        
+        this.#shadow = this.attachShadow({ mode: 'closed' });
+        this.#shadow.append(draggableWindowTemplate.content.cloneNode(true));
+    }
+    
     connectedCallback()
     {
-        this.#windowFrame = this.shadow.querySelector('.window');
-        this.#header = this.shadow.querySelector('.header');
-        this.#titleElem = this.shadow.querySelector('.header .title');
-        this.#btnMinimize = this.shadow.querySelector('.header .minimize');
-        this.#btnMaximize = this.shadow.querySelector('.header .maximize');
-        this.#btnClose = this.shadow.querySelector('.header .close');
-        this.#body = this.shadow.querySelector('.window .body iframe');
-        
+        this.#windowFrame = this.#shadow.querySelector('.window');
+        this.#header = this.#shadow.querySelector('.header');
+        this.#titleElem = this.#shadow.querySelector('.header .title');
+        this.#btnMinimize = this.#shadow.querySelector('.header .minimize');
+        this.#btnMaximize = this.#shadow.querySelector('.header .maximize');
+        this.#btnClose = this.#shadow.querySelector('.header .close');
+        this.#body = this.#shadow.querySelector('.window .body iframe');
+                
+        this.#body.name = 'content';
+
         this.#focused = false;
 
         this.#titleElem.innerText = this.getAttribute('window-title');
@@ -172,11 +182,11 @@ class DraggableWindow extends HTMLElement
             y: 100
         };
 
-        this.maximized = false;
-        this.minimized = false;
-        this.headerMouseDown = false;
+        this.#maximized = false;
+        this.#minimized = false;
+        this.#headerMouseDown = false;
 
-        this.closeEvent = new CustomEvent('close', {
+        this.#closeEvent = new CustomEvent('close', {
             bubbles: true,
             cancelable: false,
             composed: true
@@ -192,7 +202,6 @@ class DraggableWindow extends HTMLElement
             let width = this.#windowFrame.clientWidth;
             let height = this.#windowFrame.clientHeight;
             this.#size = { width, height };
-            // console.log(this.size);
             
         }).observe(this.#windowFrame);
 
@@ -208,8 +217,8 @@ class DraggableWindow extends HTMLElement
 
         this.#header.addEventListener('dblclick', () => this.maximize());
         
-        this.focusWindow();
-        this.dragWindow();
+        this.#focusWindow();
+        this.#dragWindow();
         // this.resize();
     }
 
@@ -230,7 +239,7 @@ class DraggableWindow extends HTMLElement
         return this.#body;
     }
 
-    focusWindow()
+    #focusWindow()
     {
         // Array.from(applications).filter(e => e.window).map(e => e.window).filter(e => e.focused).forEach(w =>
         // {
@@ -244,18 +253,18 @@ class DraggableWindow extends HTMLElement
         this.#body.contentWindow.focus();
     }
 
-    dragWindow()
+    #dragWindow()
     {
         let windowMouseX, windowMouseY;
         
         let mouseDown = (e) =>
         {
-            this.focusWindow();
+            this.#focusWindow();
 
             let clientX = e.clientX | e.changedTouches?.[0].pageX;
             let clientY = e.clientY | e.changedTouches?.[0].pageY;
             
-            this.headerMouseDown = true;
+            this.#headerMouseDown = true;
             windowMouseX = clientX - this.#windowFrame.offsetLeft;
             windowMouseY = clientY - this.#windowFrame.offsetTop;
             this.#body.style.pointerEvents = 'none';
@@ -272,7 +281,7 @@ class DraggableWindow extends HTMLElement
         
         let mouseUp = (e) =>
         {
-            this.headerMouseDown = false;
+            this.#headerMouseDown = false;
             this.#header.removeEventListener('mousemove', windowDrag);
             this.#body.style.pointerEvents = 'all';
         }
@@ -283,9 +292,9 @@ class DraggableWindow extends HTMLElement
             let clientX = e.clientX | e.changedTouches?.[0].pageX;
             let clientY = e.clientY | e.changedTouches?.[0].pageY;
             
-            if(this.headerMouseDown)
+            if(this.#headerMouseDown)
             {
-                if(this.maximized)
+                if(this.#maximized)
                 {
                     this.maximize();
                     
@@ -311,7 +320,7 @@ class DraggableWindow extends HTMLElement
 
         window.addEventListener('mouseleave', e =>
         {
-            this.headerMouseDown = false;
+            this.#headerMouseDown = false;
         });
     
         let windowDrag = (clientX, clientY) =>
@@ -322,7 +331,7 @@ class DraggableWindow extends HTMLElement
 
     minimize()
     {
-        if(!this.minimized)
+        if(!this.#minimized)
         {
             // let panelIcon = document.querySelector(`.panel panel-icon[app-name=${this.getAttribute('window-title')}]`);
             // let panelIconPos = { 
@@ -339,7 +348,7 @@ class DraggableWindow extends HTMLElement
             // this.#windowFrame.style.left = `${panelIconPos.x-this.size.width}px`;
             // this.#windowFrame.style.top = `${panelIconPos.y}px`;
             this.#windowFrame.style.transform = 'scale(0)';
-            this.minimized = true;
+            this.#minimized = true;
         }
         else
         {
@@ -347,19 +356,19 @@ class DraggableWindow extends HTMLElement
             this.#windowFrame.style.left = `${this.#position.x}px`;
             this.#windowFrame.style.top = `${this.#position.y}px`;
             this.#windowFrame.style.transform = 'scale(1)';
-            this.minimized = false;
+            this.#minimized = false;
         }
     }
 
     maximize()
     {
-        if(!this.maximized)
+        if(!this.#maximized)
         {
             this.#startSize = { width: this.#windowFrame.clientWidth, height: this.#windowFrame.clientHeight };
 
             this.#windowFrame.classList.add('maximized');
             
-            this.maximized = true;
+            this.#maximized = true;
         }
         else
         {
@@ -370,18 +379,19 @@ class DraggableWindow extends HTMLElement
 
             this.#windowFrame.classList.remove('maximized');
 
-            this.maximized = false;
+            this.#maximized = false;
         }
     }
 
     close()
     {
-        this.dispatchEvent(this.closeEvent);
+        this.dispatchEvent(this.#closeEvent);
         this.#windowFrame.style.transformOrigin = 'center';
         this.#windowFrame.style.transform = 'scale(0)';
 
-        let dur = this.shadow.styleSheets[0].cssRules[0].style.transitionDuration.slice(0, -1);
-        
+        //Make css variable for this
+        let dur = this.#shadow.styleSheets[0].cssRules[1].style.transitionDuration.slice(0, -1);
+    
         setTimeout(() =>
         {
             this.remove();
