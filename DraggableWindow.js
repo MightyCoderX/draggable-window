@@ -78,8 +78,8 @@ draggableWindowTemplate.innerHTML = `
         {
             position: relative;
             display: grid;
-            width: 0.9rem;
-            height: 0.9rem;
+            width: 15px;
+            height: 15px;
             border-radius: 100rem;
             place-items: center;
         }
