@@ -141,7 +141,7 @@ class DraggableWindow extends HTMLElement
     #btnMinimize;
     #btnMaximize;
     #btnClose;
-    #body;
+    #iframe;
     
     #focused;
 
@@ -175,15 +175,13 @@ class DraggableWindow extends HTMLElement
         this.#btnMinimize = this.#shadow.querySelector('.header .minimize');
         this.#btnMaximize = this.#shadow.querySelector('.header .maximize');
         this.#btnClose = this.#shadow.querySelector('.header .close');
-        this.#body = this.#shadow.querySelector('.window .body iframe');
-
-        this.#body.name = 'content';
+        this.#iframe = this.#shadow.querySelector('.window .body iframe');
 
         this.#focused = false;
 
         //Attributes
         this.#titleElem.innerText = this.getAttribute('window-title');
-        this.#body.src = this.getAttribute('content-url');
+        this.#iframe.src = this.getAttribute('content-url');
         const minimizeOrigin = this.getAttribute('minimize-origin').split(' ');
         this.#minimizeOrigin =
         {
@@ -272,7 +270,7 @@ class DraggableWindow extends HTMLElement
         this.#focused = true;
         this.#windowFrame.style.zIndex = '1';
         
-        this.#body.contentWindow.focus();
+        this.#iframe.contentWindow.focus();
     }
 
     //TODO sort out this mess
@@ -292,7 +290,7 @@ class DraggableWindow extends HTMLElement
             this.#headerMouseDown = true;
             windowMouseX = clientX - this.#windowFrame.offsetLeft;
             windowMouseY = clientY - this.#windowFrame.offsetTop;
-            this.#body.style.pointerEvents = 'none';
+            this.#iframe.style.pointerEvents = 'none';
 
             
             window.addEventListener('mouseup', mouseUp);
@@ -308,7 +306,7 @@ class DraggableWindow extends HTMLElement
         {
             this.#headerMouseDown = false;
             this.#header.removeEventListener('mousemove', windowDrag);
-            this.#body.style.pointerEvents = 'all';
+            this.#iframe.style.pointerEvents = 'all';
         }
 
         
