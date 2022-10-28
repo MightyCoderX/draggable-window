@@ -254,19 +254,8 @@ class DraggableWindow extends HTMLElement
         return this.#_position;
     }
 
-    get #iframe()
-    {
-        return this.#body;
-    }
-
     #focusWindow()
     {
-        // Array.from(applications).filter(e => e.window).map(e => e.window).filter(e => e.focused).forEach(w =>
-        // {
-        //     w.focused = false;
-        //     w.#windowFrame.style.zIndex = '0';
-        // });
-
         this.#focused = true;
         this.#windowFrame.style.zIndex = '1';
         
