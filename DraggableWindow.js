@@ -310,7 +310,11 @@ class DraggableWindow extends HTMLElement
                 {
                     this.maximize(false);
                     
-                    this.#position = { x: clientX - this.#startSize.width/2, y: clientY - this.#header.offsetHeight/2 };
+                    this.#position =
+                    { 
+                        x: clientX - this.#startSize.width/2, 
+                        y: clientY - this.#header.offsetHeight/2 
+                    };
 
                     windowMouseX = clientX - this.#windowFrame.offsetLeft;
                     windowMouseY = clientY - this.#windowFrame.offsetTop;
@@ -337,7 +341,11 @@ class DraggableWindow extends HTMLElement
     
         let windowDrag = (clientX, clientY) =>
         {
-            this.#position = { x: clientX - windowMouseX, y: clientY - windowMouseY };
+            this.#position =
+            { 
+                x: clientX - windowMouseX,
+                y: clientY - windowMouseY 
+            };
         }
     }
 
