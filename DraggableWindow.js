@@ -294,7 +294,7 @@ class DraggableWindow extends HTMLElement
         let mouseUp = (e) =>
         {
             this.#headerMouseDown = false;
-            this.#header.removeEventListener('mousemove', windowDrag);
+            this.#header.removeEventListener('mousemove', mouseMove);
             this.#iframe.style.pointerEvents = 'all';
         }
 
