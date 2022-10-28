@@ -16,7 +16,7 @@ draggableWindowTemplate.innerHTML = `
         {
             --header-height: 30px;
             --window-width: 60vw;
-            --transition-duration: 0.1s;
+            --transition-duration: 0.08s;
         
             position: absolute;
             display: block;
@@ -40,19 +40,14 @@ draggableWindowTemplate.innerHTML = `
 
         .window.minimized
         {
-            transition-property: transform, top, left;
+            transition-property: scale, top, left;
         }
 
         .window.maximized
         {
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            border-radius: 0 !important;
-            transition-property: transform, top, left, width, height, border-radius;
+            transition-property: scale, top, left, width, height, border-radius;
         }
-        
+
         .window .header
         {
             display: flex;
@@ -167,11 +162,11 @@ class DraggableWindow extends HTMLElement
     {
         super();
 
-        
+
         this.#shadow = this.attachShadow({ mode: 'closed' });
         this.#shadow.append(draggableWindowTemplate.content.cloneNode(true));
     }
-    
+
     connectedCallback()
     {
         this.#windowFrame = this.#shadow.querySelector('.window');
@@ -192,8 +187,8 @@ class DraggableWindow extends HTMLElement
         const minimizeOrigin = this.getAttribute('minimize-origin').split(' ');
         this.#minimizeOrigin =
         {
-            x: minimizeOrigin[0],
-            y: minimizeOrigin[1]
+            x: +minimizeOrigin[0],
+            y: +minimizeOrigin[1]
         };
 
         this.#startSize =
@@ -201,6 +196,7 @@ class DraggableWindow extends HTMLElement
             width: this.#windowFrame.clientWidth,
             height: this.#windowFrame.clientHeight
         };
+        
         this.#size = this.#startSize;
 
         this.#position =
@@ -223,11 +219,12 @@ class DraggableWindow extends HTMLElement
         this.#btnMaximize.addEventListener('click', () => this.maximize());
         this.#btnClose.addEventListener('click', () => this.close());
 
+
         new ResizeObserver(() =>
         {
             let { width, height } = this.#windowFrame.getBoundingClientRect();
             this.#size = { width, height };
-            
+
         }).observe(this.#windowFrame);
 
         this.#windowFrame.style.width = this.#startSize.width + 'px';
@@ -324,7 +321,7 @@ class DraggableWindow extends HTMLElement
             {
                 if(this.#maximized)
                 {
-                    this.maximize();
+                    this.maximize(false);
                     
                     this.#position = { x: clientX - this.#startSize.width/2, y: clientY - this.#header.offsetHeight/2 };
 
@@ -367,22 +364,27 @@ class DraggableWindow extends HTMLElement
             this.#windowFrame.classList.add('minimized');
             
             this.#windowFrame.style.transformOrigin = `${this.#minimizeOrigin.x}px ${this.#minimizeOrigin.y}px`;
-            this.#windowFrame.style.left = `${this.#minimizeOrigin.x-this.#size.width}px`;
-            this.#windowFrame.style.top = `${this.#minimizeOrigin.y}px`;
-            this.#windowFrame.style.transform = 'scale(0)';
+            this.#windowFrame.style.left = `${this.#minimizeOrigin.x - this.#size.width/4}px`;
+            this.#windowFrame.style.top = `${this.#minimizeOrigin.y + this.#size.height}px`;
+            this.#windowFrame.style.scale = 0;
             this.#minimized = true;
         }
         else
         {
-            this.#windowFrame.classList.remove('minimized');
+            this.#windowFrame.style.transformOrigin = `${this.#minimizeOrigin.x}px ${this.#minimizeOrigin.y}px`;
             this.#windowFrame.style.left = `${this.#position.x}px`;
             this.#windowFrame.style.top = `${this.#position.y}px`;
-            this.#windowFrame.style.transform = 'scale(1)';
+            this.#windowFrame.style.scale = 1;
             this.#minimized = false;
+
+            this.afterFrameTransition(e =>
+            {
+                e.target.classList.remove('minimized')
+            });
         }
     }
 
-    maximize()
+    maximize(animateBack = true)
     {
         if(!this.#maximized)
         {
@@ -394,6 +396,11 @@ class DraggableWindow extends HTMLElement
 
             this.#windowFrame.classList.add('maximized');
             
+            this.#windowFrame.style.top = 0;
+            this.#windowFrame.style.left = 0;
+            this.#windowFrame.style.width = '100%';
+            this.#windowFrame.style.height = '100%';
+            this.#windowFrame.style.borderRadius= 0;
             this.#maximized = true;
         }
         else
@@ -406,26 +413,40 @@ class DraggableWindow extends HTMLElement
 
             this.#windowFrame.style.width = this.#startSize.width+'px';
             this.#windowFrame.style.height = this.#startSize.height+'px';
-
-            this.#windowFrame.classList.remove('maximized');
-
+            this.#windowFrame.style.borderRadius= '';
             this.#maximized = false;
+
+            if(animateBack)
+            {
+                this.afterFrameTransition(e =>
+                {
+                    e.target.classList.remove('maximized');
+                });
+            }
+            else
+            {
+                this.#windowFrame.classList.remove('maximized');
+            }
         }
+    }
+
+    afterFrameTransition(callback)
+    {
+        const onTransitionEnd = e =>
+        {
+            callback(e);
+            this.#windowFrame.removeEventListener('transitionend', onTransitionEnd);
+        };
+        this.#windowFrame.addEventListener('transitionend', onTransitionEnd);
     }
 
     close()
     {
         this.dispatchEvent(this.#closeEvent);
         this.#windowFrame.style.transformOrigin = 'center';
-        this.#windowFrame.style.transform = 'scale(0)';
+        this.#windowFrame.style.scale = 0;
 
-        let duration = getComputedStyle(this.#windowFrame)
-            .getPropertyValue('--transition-duration').slice(0, -1);
-    
-        setTimeout(() =>
-        {
-            this.remove();
-        }, duration*1000);
+        this.afterFrameTransition(() => this.remove());
     }
 }
 
