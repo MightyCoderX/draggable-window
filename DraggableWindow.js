@@ -66,6 +66,7 @@ draggableWindowTemplate.innerHTML = `
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            padding-right: 1em;
         }
         
         .window .header .left-buttons
