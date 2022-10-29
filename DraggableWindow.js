@@ -63,7 +63,9 @@ draggableWindowTemplate.innerHTML = `
         {
             pointer-events: none;
             user-select: none;
-            line-height: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         .window .header .left-buttons
