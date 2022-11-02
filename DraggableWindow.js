@@ -329,6 +329,7 @@ class DraggableWindow extends HTMLElement
                     windowMouseX = clientX - this.#windowFrame.offsetLeft;
                     windowMouseY = clientY - this.#windowFrame.offsetTop;
                 }
+
                 windowDrag(clientX, clientY);
                 
                 // if(!maximized && this.windowContainer.offsetTop <= 5)
@@ -382,10 +383,8 @@ class DraggableWindow extends HTMLElement
             this.#windowFrame.style.scale = 1;
             this.#minimized = false;
 
-            this.afterFrameTransition(e =>
-            {
-                e.target.classList.remove('minimized')
-            });
+            await this.#frameTransitionEnd();
+            this.#windowFrame.classList.remove('minimized');
         }
     }
 
@@ -421,28 +420,34 @@ class DraggableWindow extends HTMLElement
             this.#windowFrame.style.borderRadius= '';
             this.#maximized = false;
 
-            if(animateBack)
-            {
-                this.afterFrameTransition(e =>
-                {
-                    e.target.classList.remove('maximized');
-                });
-            }
-            else
-            {
-                this.#windowFrame.classList.remove('maximized');
-            }
+            if(animateBack) await this.#frameTransitionEnd();
+            
+            this.#windowFrame.classList.remove('maximized');
         }
     }
-
-    afterFrameTransition(callback)
+    
+    async close()
     {
-        const onTransitionEnd = e =>
+        this.dispatchEvent(this.#closeEvent);
+
+        this.#windowFrame.style.transformOrigin = 'center';
+        this.#windowFrame.style.scale = 0;
+
+        await this.#frameTransitionEnd();
+        this.remove();
+    }
+
+    #frameTransitionEnd()
+    {
+        return new Promise(resolve =>
         {
-            callback(e);
-            this.#windowFrame.removeEventListener('transitionend', onTransitionEnd);
-        };
-        this.#windowFrame.addEventListener('transitionend', onTransitionEnd);
+            const onTransitionEnd = e =>
+            {
+                resolve(e);
+                this.#windowFrame.removeEventListener('transitionend', onTransitionEnd);
+            };
+            this.#windowFrame.addEventListener('transitionend', onTransitionEnd);
+        });
     }
 
     #addMouseDownListeners(elem, callback, options)
