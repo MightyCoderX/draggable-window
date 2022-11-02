@@ -397,8 +397,8 @@ class DraggableWindow extends HTMLElement
             
             this.#windowFrame.style.top = 0;
             this.#windowFrame.style.left = 0;
-            this.#windowFrame.style.width = '100%';
-            this.#windowFrame.style.height = '100%';
+            this.#windowFrame.style.width = window.innerWidth + 'px';
+            this.#windowFrame.style.height = window.innerHeight + 'px';
             this.#windowFrame.style.borderRadius= 0;
             this.#maximized = true;
         }
