@@ -445,13 +445,23 @@ class DraggableWindow extends HTMLElement
         this.#windowFrame.addEventListener('transitionend', onTransitionEnd);
     }
 
-    close()
+    #addMouseDownListeners(elem, callback, options)
     {
-        this.dispatchEvent(this.#closeEvent);
-        this.#windowFrame.style.transformOrigin = 'center';
-        this.#windowFrame.style.scale = 0;
+        elem.addEventListener('mousedown', callback, options);
+        elem.addEventListener('touchstart', callback, options);
+    }
 
-        this.afterFrameTransition(() => this.remove());
+    #addMouseMoveListeners(elem, callback, options)
+    {
+        elem.addEventListener('mousemove', callback, options);
+        elem.addEventListener('touchmove', callback, options);
+    }
+
+    #addMouseUpListeners(elem, callback, options)
+    {
+        elem.addEventListener('mouseup', callback, options);
+        elem.addEventListener('touchend', callback, options);
+        elem.addEventListener('touchcancel', callback, options);
     }
 }
 
