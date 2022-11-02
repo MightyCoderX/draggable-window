@@ -14,4 +14,5 @@ Try it at https://mightycoderx.github.io/draggable-window/
 For a full example look at [`index.html`](./index.html)
 
 ## TODO
+- [ ] Try to prevent the mouse from going beyond the top border
 - [ ] Update folder structure to use src and dist/build
