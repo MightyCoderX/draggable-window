@@ -221,12 +221,18 @@ class DraggableWindow extends HTMLElement
         this.#btnMaximize.addEventListener('click', () => this.maximize());
         this.#btnClose.addEventListener('click', () => this.close());
 
-
         new ResizeObserver(() =>
         {
             let { width, height } = this.#windowFrame.getBoundingClientRect();
             this.#size = { width, height };
+            this.#iframe.style.pointerEvents = 'none';
+            
+            const resizeEnd = () =>
+            {
+                this.#iframe.style.pointerEvents = 'all';
+            }
 
+            window.addEventListener('mouseup', resizeEnd, { once: true });
         }).observe(this.#windowFrame);
 
         this.#windowFrame.style.width = this.#startSize.width + 'px';
