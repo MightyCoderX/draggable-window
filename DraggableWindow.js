@@ -364,15 +364,18 @@ class DraggableWindow extends HTMLElement
         {
             if(this.#maximized) await this.maximize();
 
-            this.#position.x = this.#windowFrame.getBoundingClientRect().x;
-            this.#position.y = this.#windowFrame.getBoundingClientRect().y;
-
             this.#windowFrame.classList.add('minimized');
+
+            const { x, y } = this.#minimizeOrigin;
+
+            const scale = 0;
+            const left = x > this.#position.x ? x - this.#size.width : x;
+            const top = y > this.#position.y ? y - this.#size.height : y;
             
-            this.#windowFrame.style.transformOrigin = `${this.#minimizeOrigin.x}px ${this.#minimizeOrigin.y}px`;
-            this.#windowFrame.style.left = `${this.#minimizeOrigin.x - this.#size.width/4}px`;
-            this.#windowFrame.style.top = `${this.#minimizeOrigin.y + this.#size.height}px`;
-            this.#windowFrame.style.scale = 0;
+            this.#windowFrame.style.transformOrigin = `${x}px ${y}px`;
+            this.#windowFrame.style.left = `${left * scale}px`;
+            this.#windowFrame.style.top = `${top * scale}px`;
+            this.#windowFrame.style.scale = scale;
             this.#minimized = true;
         }
         else
