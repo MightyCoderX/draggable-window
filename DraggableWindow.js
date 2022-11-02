@@ -18,12 +18,12 @@ draggableWindowTemplate.innerHTML = `
             --window-width: 60vw;
             --transition-duration: 0.08s;
         
-            position: absolute;
+            position: fixed;
             display: block;
             color: white;
             font-family: sans-serif;
-            top: 20px;
             left: 100px;
+            top: 20px;
             border-radius: 0.5rem 0.5rem 0 0;
             overflow: hidden;
             box-shadow: 0px 0px 5px #222222a4;
@@ -32,7 +32,7 @@ draggableWindowTemplate.innerHTML = `
             transition-timing-function: ease-in;
             pointer-events: all;
             width: var(--window-width);
-            height: calc(var(--window-width) * 9/16);
+            aspect-ratio: 16/10;
             min-width: 100px;
             min-height: 100px;
             resize: both;
