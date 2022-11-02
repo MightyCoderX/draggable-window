@@ -227,12 +227,11 @@ class DraggableWindow extends HTMLElement
             this.#size = { width, height };
             this.#iframe.style.pointerEvents = 'none';
             
-            const resizeEnd = () =>
+            this.#addMouseUpListeners(window, () =>
             {
                 this.#iframe.style.pointerEvents = 'all';
-            }
+            }, { once: true });
 
-            window.addEventListener('mouseup', resizeEnd, { once: true });
         }).observe(this.#windowFrame);
 
         this.#windowFrame.style.width = this.#startSize.width + 'px';
@@ -291,17 +290,12 @@ class DraggableWindow extends HTMLElement
             windowMouseY = clientY - this.#windowFrame.offsetTop;
             this.#iframe.style.pointerEvents = 'none';
 
-            
-            window.addEventListener('mouseup', mouseUp);
-            window.addEventListener('touchend', mouseUp);
-            window.addEventListener('touchcancel', mouseUp);
+            this.#addMouseUpListeners(window, mouseUp, { once: true });
         }
     
-        this.#header.addEventListener('mousedown', mouseDown);
-        this.#header.addEventListener('touchstart', mouseDown);
+        this.#addMouseDownListeners(this.#header, mouseDown);
         
-        
-        let mouseUp = (e) =>
+        let mouseUp = () =>
         {
             this.#headerMouseDown = false;
             this.#header.removeEventListener('mousemove', mouseMove);
@@ -309,7 +303,7 @@ class DraggableWindow extends HTMLElement
         }
 
         
-        let mouseMove = (e) =>
+        let mouseMove = e =>
         {
             let clientX = e.clientX | e.changedTouches?.[0].pageX;
             let clientY = e.clientY | e.changedTouches?.[0].pageY;
@@ -341,9 +335,8 @@ class DraggableWindow extends HTMLElement
                 // }
             }   
         }
-            
-        window.addEventListener('mousemove', mouseMove);
-        window.addEventListener('touchmove', mouseMove);
+
+        this.#addMouseMoveListeners(window, mouseMove);
 
         window.addEventListener('mouseleave', e =>
         {
