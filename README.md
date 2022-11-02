@@ -12,3 +12,6 @@ Try it at https://mightycoderx.github.io/draggable-window/
 1. Use custom element with the needed properties
 
 For a full example look at [`index.html`](./index.html)
+
+## TODO
+- [ ] Update folder structure to use src and dist/build
