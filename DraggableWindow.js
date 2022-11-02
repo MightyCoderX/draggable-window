@@ -358,10 +358,12 @@ class DraggableWindow extends HTMLElement
         }
     }
 
-    minimize()
+    async minimize()
     {
         if(!this.#minimized)
         {
+            if(this.#maximized) await this.maximize();
+
             this.#position.x = this.#windowFrame.getBoundingClientRect().x;
             this.#position.y = this.#windowFrame.getBoundingClientRect().y;
 
@@ -386,7 +388,7 @@ class DraggableWindow extends HTMLElement
         }
     }
 
-    maximize(animateBack = true)
+    async maximize(animateBack = true)
     {
         if(!this.#maximized)
         {
