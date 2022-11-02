@@ -341,14 +341,19 @@ class DraggableWindow extends HTMLElement
         window.addEventListener('mouseleave', e =>
         {
             this.#headerMouseDown = false;
-        });
+        }, { once: true });
     
         let windowDrag = (clientX, clientY) =>
         {
+            let clampedX = clientX - windowMouseX;
+            let clampedY = clientY - windowMouseY;
+
+            if(clampedY < 0) clampedY = 0;
+
             this.#position =
             { 
-                x: clientX - windowMouseX,
-                y: clientY - windowMouseY 
+                x: clampedX,
+                y: clampedY
             };
         }
     }
