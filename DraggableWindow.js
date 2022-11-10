@@ -130,7 +130,7 @@ draggableWindowTemplate.innerHTML = `
             </div>
         </div>
         <div class="body">
-            <iframe src="."></iframe>
+            <iframe src="." allowtransparency></iframe>
         </div>
     </div>
 `;
