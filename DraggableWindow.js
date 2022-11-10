@@ -104,7 +104,8 @@ draggableWindowTemplate.innerHTML = `
         
         .window .body
         {
-            background: #333;
+            background: #111111f0;
+            backdrop-filter: blur(15px);
             height: calc(100% - var(--header-height));
             width: 100%;
             user-select: none;
@@ -253,13 +254,6 @@ class DraggableWindow extends HTMLElement
 
         this.#windowFrame.style.width = this.#startSize.width + 'px';
         this.#windowFrame.style.height = this.#startSize.height + 'px';
-
-        // TODO: fix focus on click on the window body
-        // this.body.contentWindow.addEventListener('click', () =>
-        // {
-        //     console.log('Focusing this window', this.title);
-        //     this.focusWindow();
-        // });
 
         this.#header.addEventListener('dblclick', () => this.maximize());
         

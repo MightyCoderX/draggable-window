@@ -24,7 +24,7 @@
                 width: 100%;
                 height: 100%;
                 overflow: hidden;
-                background-color: #001;
+                background: repeating-linear-gradient(#001, #334);
             }
         </style>
     </head>
@@ -32,7 +32,7 @@
         <!-- Use the custom element like a normal element -->
         <draggable-window 
             window-title="Test" 
-            content-url="https://example.com" 
+            content-url="data:text/html, <h1 style='color: white; font-family: sans-serif'>Hello</h1>" 
             minimize-origin="20 20"
             onclose="console.log('closed!', this)"
         >
