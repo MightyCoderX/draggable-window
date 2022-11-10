@@ -109,6 +109,8 @@ draggableWindowTemplate.innerHTML = `
             width: 100%;
             user-select: none;
             border: 1px solid #222;
+            overscroll-behavior: none;
+            overflow: hidden;
         }
 
         .window .body iframe
@@ -159,6 +161,7 @@ class DraggableWindow extends HTMLElement
     #size;
 
     #closeEvent;
+    #shouldFocusEvent
     
     #_position;
 
@@ -198,7 +201,7 @@ class DraggableWindow extends HTMLElement
             width: this.#windowFrame.clientWidth,
             height: this.#windowFrame.clientHeight
         };
-        
+
         this.#size = this.#startSize;
 
         this.#position =
@@ -211,11 +214,25 @@ class DraggableWindow extends HTMLElement
         this.#minimized = false;
         this.#headerMouseDown = false;
 
-        this.#closeEvent = new CustomEvent('close', {
+        this.#closeEvent = new CustomEvent('close',
+        {
             bubbles: true,
             cancelable: false,
             composed: true
         });
+
+        this.#shouldFocusEvent = new CustomEvent('shouldfocus',
+        {
+            bubbles: false,
+            cancelable: false,
+            composed: true,
+            detail: 
+            {
+                focused: this.#focused,
+                frame: this.#windowFrame,
+            }
+        });
+        this.dispatchEvent(this.#shouldFocusEvent);
         
         this.#btnMinimize.addEventListener('click', () => this.minimize());
         this.#btnMaximize.addEventListener('click', () => this.maximize());
@@ -246,7 +263,7 @@ class DraggableWindow extends HTMLElement
 
         this.#header.addEventListener('dblclick', () => this.maximize());
         
-        this.#focusWindow();
+
         this.#dragWindow();
         // this.resize();
     }
@@ -263,14 +280,6 @@ class DraggableWindow extends HTMLElement
         return this.#_position;
     }
 
-    #focusWindow()
-    {
-        this.#focused = true;
-        this.#windowFrame.style.zIndex = '1';
-        
-        this.#iframe.contentWindow.focus();
-    }
-
     //TODO sort out this mess
     #dragWindow()
     {
@@ -280,7 +289,7 @@ class DraggableWindow extends HTMLElement
         {
             if(!e.target.matches('.header')) return;
 
-            this.#focusWindow();
+            this.dispatchEvent(this.#shouldFocusEvent);
 
             let clientX = e.clientX | e.changedTouches?.[0].pageX;
             let clientY = e.clientY | e.changedTouches?.[0].pageY;
