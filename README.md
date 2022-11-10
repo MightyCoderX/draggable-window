@@ -8,8 +8,21 @@ The draggable window module from my [MightyOS](https://mightycoderx.github.io/Mi
 Try it at https://mightycoderx.github.io/draggable-window/
 
 ## How To Use
-1. Add script to head (still not minified)
+1. Add script to head
+    ```html
+    <script src="https://cdn.jsdelivr.net/gh/MightyCoderX/draggable-window@master/DraggableWindow.min.js"></script>
+
+    ```
 1. Use custom element with the needed properties
+    ```html
+    <draggable-window 
+        window-title="Example" 
+        content-url="https://example.com" 
+        minimize-origin="20 20"
+        onclose="console.log('closed!', this)"
+    >
+    </draggable-window>
+    ```
 
 For a full example look at [`index.html`](./index.html)
 
